@@ -1,51 +1,80 @@
-const game = document.getElementById("game");
-const winMessage = document.getElementById("winMessage");
-const movesDisplay = document.getElementById("moves");
-const timeDisplay = document.getElementById("time");
+let startScreen;
+let gameScreen;
+let highScoreDisplay;
+let winMessage;
+let movesDisplay;
+let timeDisplay;
 
-const emojis = ["🍎","🍎","🍌","🍌","🍇","🍇","🍒","🍒","🍉","🍉","🍍","🍍"];
+document.addEventListener("DOMContentLoaded", () => {
+    startScreen = document.getElementById("startScreen");
+    gameScreen = document.getElementById("gameScreen");
+    highScoreDisplay = document.getElementById("highScore");
+    winMessage = document.getElementById("winMessage");
+    movesDisplay = document.getElementById("moves");
+    timeDisplay = document.getElementById("time");
+});
 
-emojis.sort(() =>0.5 - Math.random());
+function startTimer() {
+    time = 0;
+    document.getElementById("time").textContent = time;
 
+    timer = setInterval(() => {
+        time++;
+        document.getElementById("time").textContent = time;
+    }, 1000);
+}
+
+let timer;
+let time = 0;
+let moves = 0;
+let matches = 0;
 let firstCard = null;
 let secondCard = null;
 let lockBoard = false;
 
-let matches = 0;
-let moves = 0;
-let time = 0;
+function startGame() {
+    startScreen.style.display = "none";
+    gameScreen.style.display = "block";
 
-const timer = setInterval(() => {
-    time++;
-    timeDisplay.textContent = time;
-}, 1000);
+    loadHighScore();
+    createGame();
+    startTimer();
+}
 
-emojis.forEach(emoji => {
+function createGame() {
+  const game = document.getElementById("game");
+  game.innerHTML = "";
+
+  const emojis = ["🍎","🍎","🍌","🍌","🍇","🍇","🍒","🍒","🍉","🍉","🍍","🍍"];
+
+  emojis.sort(() => 0.5 - Math.random());
+
+  emojis.forEach(emoji => {
     const card = document.createElement("div");
     card.classList.add("card");
     card.dataset.value = emoji;
 
     card.addEventListener("click", () => {
-        if (lockBoard) return;
-        if (card === firstCard) return;
-        if (card.classList.contains("flipped")) return;
+      if (lockBoard) return;
+      if (card === firstCard) return;
+      if (card.classList.contains("flipped")) return;
 
-        flipCard(card, emoji);
+      flipCard(card, emoji);
 
-        if (!firstCard) {
-            firstCard = card;
-        } else {
-            secondCard = card;
-            
-            moves++;
-            movesDisplay.textContent = moves;
-
-            checkMatch();
-        }
+      if (!firstCard) {
+        firstCard = card;
+      } else {
+        secondCard = card;
+        moves++;
+        document.getElementById("moves").textContent = moves;
+        checkMatch();
+      }
     });
 
     game.appendChild(card);
-});
+  });
+
+}
 
 function flipCard(card, emoji) {
     card.classList.add("flipped");
@@ -55,12 +84,14 @@ function flipCard(card, emoji) {
 function checkMatch() {
   let isMatch = firstCard.dataset.value === secondCard.dataset.value;
 
+ 
   if (isMatch) {
     matches++;
     resetTurn();
 
     if (matches === 6) {
       clearInterval(timer);
+      saveHighScore();
       winMessage.textContent = `🎉 You win in ${moves} moves and ${time}s!`;
     }
   } else {
@@ -90,4 +121,23 @@ function resetTurn() {
 
 function restartGame() {
   location.reload();
+}
+
+function loadHighScore() {
+    let best = localStorage.getItem("bestTime");
+    
+    if (best !== null) {
+        highScoreDisplay.textContent = best;
+    } else {
+        highScoreDisplay.textContent = "--";
+    }
+}
+
+function saveHighScore() {
+    let best = localStorage.getItem("bestTime");
+
+    if (best === null || time < Number(best)) {
+        localStorage.setItem("bestTime", time);
+        highScoreDisplay.textContent = time;
+    }
 }

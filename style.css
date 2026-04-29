@@ -1,10 +1,12 @@
 body {
     text-align: center;
     font-family: Arial;
+    background: #f0f0f0;
 }
 
 #game {
     display: grid;
+   
     grid-template-columns: repeat(3, 100px);
     gap: 10px;
     justify-content: center;
@@ -25,4 +27,15 @@ body {
 
 .card.flipped {
     background: white;
+    color: black;
+    transform: rotateY(180deg);
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }

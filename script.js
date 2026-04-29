@@ -1,7 +1,9 @@
 const game = document.getElementById("game");
 const winMessage = document.getElementById("winMessage");
+const movesDisplay = document.getElementById("moves");
+const timeDisplay = document.getElementById("time");
 
-const emojis = ["🍎", "🍎", "🍌", "🍌", "🍇", "🍇"];
+const emojis = ["🍎","🍎","🍌","🍌","🍇","🍇","🍒","🍒","🍉","🍉","🍍","🍍"];
 
 for (let i = emojis.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -12,6 +14,14 @@ let firstCard = null;
 let secondCard = null;
 let lockBoard = false;
 let matches = 0;
+
+let moves = 0;
+let time = 0;
+
+const timer = setInterval(() => {
+    time++;
+    timeDisplay.textContent = time;
+}, 1000);
 
 emojis.forEach(emoji => {
     const card = document.createElement("div");
@@ -30,6 +40,10 @@ emojis.forEach(emoji => {
             firstCard = card;
         } else {
             secondCard = card;
+            
+            moves++;
+            movesDisplay.textContent = moves;
+
             checkMatch();
         }
     });
@@ -42,8 +56,9 @@ function checkMatch() {
         matches++;
         resetTurn();
 
-        if (matches === 3) {
-            winMessage.textContent = "You won!";
+        if (matches === 6) {
+            clearInterval(timer);
+            winMessage.textContent = `🎉 You win in ${moves} moves and ${time}s!`;
         }
     } else {
         lockBoard = true;
@@ -62,4 +77,8 @@ function resetTurn() {
     firstCard = null;
     secondCard = null;
     lockBoard = false;
+}
+
+function restartGame() {
+    location.reload();
 }

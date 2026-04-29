@@ -5,16 +5,13 @@ const timeDisplay = document.getElementById("time");
 
 const emojis = ["🍎","🍎","🍌","🍌","🍇","🍇","🍒","🍒","🍉","🍉","🍍","🍍"];
 
-for (let i = emojis.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
-}
+emojis.sort(() =>0.5 - Math.random());
 
 let firstCard = null;
 let secondCard = null;
 let lockBoard = false;
-let matches = 0;
 
+let matches = 0;
 let moves = 0;
 let time = 0;
 
@@ -33,8 +30,7 @@ emojis.forEach(emoji => {
         if (card === firstCard) return;
         if (card.classList.contains("flipped")) return;
 
-        card.classList.add("flipped");
-        card.textContent = emoji;
+        flipCard(card, emoji);
 
         if (!firstCard) {
             firstCard = card;
@@ -51,34 +47,47 @@ emojis.forEach(emoji => {
     game.appendChild(card);
 });
 
-function checkMatch() {
-    if (firstCard.dataset.value === secondCard.dataset.value) {
-        matches++;
-        resetTurn();
-
-        if (matches === 6) {
-            clearInterval(timer);
-            winMessage.textContent = `🎉 You win in ${moves} moves and ${time}s!`;
-        }
-    } else {
-        lockBoard = true;
-
-        setTimeout(() => {
-            firstCard.classList.remove("flipped");
-            secondCard.classList.remove("flipped");
-            firstCard.textContent = "";
-            secondCard.textContent = "";
-            resetTurn();
-        }, 1000);
-    }
+function flipCard(card, emoji) {
+    card.classList.add("flipped");
+    card.textContent = emoji;
 }
+
+function checkMatch() {
+  let isMatch = firstCard.dataset.value === secondCard.dataset.value;
+
+  if (isMatch) {
+    matches++;
+    resetTurn();
+
+    if (matches === 6) {
+      clearInterval(timer);
+      winMessage.textContent = `🎉 You win in ${moves} moves and ${time}s!`;
+    }
+  } else {
+    lockBoard = true;
+
+    setTimeout(() => {
+      unflipCard(firstCard);
+      unflipCard(secondCard);
+      resetTurn();
+    }, 900);
+  }
+}
+
+
+function unflipCard(card) {
+  card.classList.remove("flipped");
+  card.textContent = "";
+}
+
 
 function resetTurn() {
-    firstCard = null;
-    secondCard = null;
-    lockBoard = false;
+  firstCard = null;
+  secondCard = null;
+  lockBoard = false;
 }
 
+
 function restartGame() {
-    location.reload();
+  location.reload();
 }

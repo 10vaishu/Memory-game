@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Memory Game</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <h1>Memory Game</h1>
-        <div id="game"></div>
-        <p id="winMessage"></p>
+<head>
+  <title>Memory Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-        <script src="script.js"></script>
-    </body>
+  <h1>Memory Game</h1>
+
+  <div class="stats">
+    <p>Moves: <span id="moves">0</span></p>
+    <p>Time: <span id="time">0</span>s</p>
+  </div>
+
+  <div id="game"></div>
+
+  <p id="winMessage"></p>
+
+  <button onclick="restartGame()">Restart</button>
+
+  <script src="script.js"></script>
+</body>
 </html>
